@@ -9,8 +9,8 @@ let session = require('express-session');
 let passport = require('passport');
 
 let GitHubStrategy = require('passport-github2').Strategy;
-let GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
-let GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+// let GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+// let GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -21,9 +21,9 @@ passport.deserializeUser(function(obj, done) {
 });
 
 passport.use(new GitHubStrategy({
-  clientID: GITHUB_CLIENT_ID,
-  clientSecret: GITHUB_CLIENT_SECRET,
-  callbackURL: 'http://localhost:8000/auth/github/callback',
+  clientID: process.env.GITHUB_CLIENT_ID,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  callbackURL: 'http://localhost:3000/auth/github/callback',
 },
 function(accessToken, refreshToken, profile, done) {
   process.nextTick(function() {
@@ -61,8 +61,24 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// MARK: ルーター設定
 app.use('/', index);
-app.use('/users', users);
+app.use('/login', login);
+app.use('/logout', logout);
+
+app.get('/auth/github',
+  passport.authenticate('github', {
+    scope: ['user:email'],
+  }, function(req, res) {})
+);
+
+app.get('/auth/github/callback',
+  passport.authenticate('github', {
+    failureRedirect: '/login',
+  }),
+  function(req, res) {
+    res.redirect('/');
+  });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
