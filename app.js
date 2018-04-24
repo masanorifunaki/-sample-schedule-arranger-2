@@ -1,17 +1,15 @@
 'use strict';
-let express = require('express');
-let path = require('path');
-let favicon = require('serve-favicon');
-let logger = require('morgan');
-let cookieParser = require('cookie-parser');
-let bodyParser = require('body-parser');
-let helmet = require('helmet');
-let session = require('express-session');
-let passport = require('passport');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const helmet = require('helmet');
+const session = require('express-session');
+const passport = require('passport');
 
-let GitHubStrategy = require('passport-github2').Strategy;
-// let GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
-// let GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+const GitHubStrategy = require('passport-github2').Strategy;
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -33,11 +31,11 @@ function(accessToken, refreshToken, profile, done) {
 }
 ));
 
-let index = require('./routes/index');
-let login = require('./routes/login');
-let logout = require('./routes/logout');
+const index = require('./routes/index');
+const login = require('./routes/login');
+const logout = require('./routes/logout');
 
-let app = express();
+const app = express();
 app.use(helmet());
 
 // view engine setup

@@ -3,8 +3,22 @@
 const request = require('supertest');
 // テストの対象となる、 app.js の読み込み
 const app = require('../app');
+const passportStub = require('passport-stub');
 
 describe('/login', () => {
+  before(() => {
+    passportStub.install(app);
+    passportStub.login({
+      username: 'testuser',
+    });
+  });
+
+  after(() => {
+    passportStub.logout();
+    passportStub.uninstall();
+  });
+
+
   it('ログインのためのリンクが含まれる', (done) => {
     request(app)
       .get('/login')
@@ -13,6 +27,13 @@ describe('/login', () => {
       // expect 関数に、正規表現を一つ渡すと、 HTML の body 内にその正規表現が含まれるかをテスト
       .expect(/<a href="\/auth\/github"/)
       // テストを終了する際には、 expect 関数に、期待されるステータスコードの整数と、テスト自体の引数に渡される done 関数を渡す
+      .expect(200, done);
+  });
+
+  it('ログイン時はユーザー名が表示される', (done) => {
+    request(app)
+      .get('/login')
+      .expect(/testuser/)
       .expect(200, done);
   });
 });
