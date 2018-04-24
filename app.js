@@ -1,4 +1,5 @@
-const express = require('express');
+'use strict';
+let express = require('express');
 let path = require('path');
 let favicon = require('serve-favicon');
 let logger = require('morgan');
