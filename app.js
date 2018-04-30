@@ -67,6 +67,7 @@ function(accessToken, refreshToken, profile, done) {
 const index = require('./routes/index');
 const login = require('./routes/login');
 const logout = require('./routes/logout');
+const schedules = require('./routes/schedules');
 
 const app = express();
 app.use(helmet());
@@ -97,6 +98,7 @@ app.use(passport.session());
 app.use('/', index);
 app.use('/login', login);
 app.use('/logout', logout);
+app.use('/schedules', schedules);
 
 app.get('/auth/github',
   passport.authenticate('github', {
