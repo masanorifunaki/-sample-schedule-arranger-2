@@ -9,6 +9,33 @@ const helmet = require('helmet');
 const session = require('express-session');
 const passport = require('passport');
 
+// MARK: モデルの読み込み
+const User = require('./models/user');
+const Schedule = require('./models/schedule');
+const Availability = require('./models/availability');
+const Candidate = require('./models/candidate');
+const Comment = require('./models/comment');
+
+User.sync().then(() => {
+  Schedule.belongsTo(User, {
+    foreignKey: 'createdBy',
+  });
+  Schedule.sync();
+  Comment.belongsTo(User, {
+    foreignKey: 'userId',
+  });
+  Comment.sync();
+  Availability.belongsTo(User, {
+    foreignKey: 'userId',
+  });
+  Candidate.sync().then(() => {
+    Availability.belongsTo(Candidate, {
+      foreignKey: 'candidateId',
+    });
+    Availability.sync();
+  });
+});
+
 const GitHubStrategy = require('passport-github2').Strategy;
 
 passport.serializeUser(function(user, done) {
@@ -26,7 +53,13 @@ passport.use(new GitHubStrategy({
 },
 function(accessToken, refreshToken, profile, done) {
   process.nextTick(function() {
-    return done(null, profile);
+    // ユーザーの保存
+    User.upsert({
+      userId: profile.id,
+      username: profile.username,
+    }).then(() => {
+      done(null, profile);
+    });
   });
 }
 ));
