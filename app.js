@@ -69,6 +69,7 @@ const login = require('./routes/login');
 const logout = require('./routes/logout');
 const schedules = require('./routes/schedules');
 const availabilities = require('./routes/availabilities');
+const comments = require('./routes/comments');
 
 const app = express();
 app.use(helmet());
@@ -101,6 +102,7 @@ app.use('/login', login);
 app.use('/logout', logout);
 app.use('/schedules', schedules);
 app.use('/schedules', availabilities);
+app.use('/schedules', comments);
 
 app.get('/auth/github',
   passport.authenticate('github', {
@@ -113,7 +115,16 @@ app.get('/auth/github/callback',
     failureRedirect: '/login',
   }),
   function(req, res) {
-    res.redirect('/');
+    let loginFrom = req.cookies.loginFrom;
+    // オープンリダイレクタ脆弱性対策
+    if (loginFrom &&
+      loginFrom.indexOf('http://') < 0 &&
+      loginFrom.indexOf('https://') < 0) {
+      res.clearCookie('loginFrom');
+      res.redirect(loginFrom);
+    } else {
+      res.redirect('/');
+    }
   });
 
 // catch 404 and forward to error handler
