@@ -1,5 +1,8 @@
 'use strict';
 import $ from 'jquery';
+const global = Function('return this;')();
+global.jQuery = $;
+import bootstrap from 'bootstrap';
 
 // 各繰り返し処理で実行したい関数を指定 each (index, Element)
 $('.availability-toggle-button').each((i, e) => {
@@ -20,6 +23,10 @@ $('.availability-toggle-button').each((i, e) => {
       button.data('availability', data.availability);
       const availabilityLabels = ['欠', '？', '出'];
       button.text(availabilityLabels[data.availability]);
+
+      const buttonStyles = ['btn-danger', 'btn-default', 'btn-success'];
+      button.removeClass('btn-danger btn-default btn-success');
+      button.addClass(buttonStyles[data.availability]);
     });
   });
 });
