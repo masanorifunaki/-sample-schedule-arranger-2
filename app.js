@@ -68,6 +68,7 @@ const index = require('./routes/index');
 const login = require('./routes/login');
 const logout = require('./routes/logout');
 const schedules = require('./routes/schedules');
+const availabilities = require('./routes/availabilities');
 
 const app = express();
 app.use(helmet());
@@ -99,6 +100,7 @@ app.use('/', index);
 app.use('/login', login);
 app.use('/logout', logout);
 app.use('/schedules', schedules);
+app.use('/schedules', availabilities);
 
 app.get('/auth/github',
   passport.authenticate('github', {
